@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html,
@@ -12,8 +12,8 @@ body {
 }
 
 body {
-  background-color: #0b0e17;
-  color: #e5e7eb;
+  background-color: #faf7f2;
+  color: #221f1a;
 }
 
 ::-webkit-scrollbar {
@@ -24,37 +24,36 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #232a3d;
+  background: #e2d9c7;
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2f3850;
+  background: #d0c4ab;
 }
 
 .glass-card {
-  background: linear-gradient(180deg, rgba(20, 26, 41, 0.9) 0%, rgba(17, 22, 35, 0.9) 100%);
-  border: 1px solid #232a3d;
-  backdrop-filter: blur(12px);
+  background: #ffffff;
+  border: 1px solid #e7e0d1;
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #141a29 25%, #1c2438 37%, #141a29 63%);
+  background: linear-gradient(90deg, #f1ebe0 25%, #e6ddcc 37%, #f1ebe0 63%);
   background-size: 1000px 100%;
   animation: shimmer 1.6s infinite linear;
 }
 
 .recharts-cartesian-axis-tick text {
-  fill: #6b7280;
+  fill: #8a8171;
   font-size: 12px;
 }
 
 .recharts-cartesian-grid-horizontal line,
 .recharts-cartesian-grid-vertical line {
-  stroke: #1c2438;
+  stroke: #ede5d5;
 }
 
 .recharts-default-tooltip {
-  background-color: #141a29 !important;
-  border: 1px solid #232a3d !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e7e0d1 !important;
   border-radius: 10px !important;
 }

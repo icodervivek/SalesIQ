@@ -13,8 +13,8 @@ export function ChartCard({
     <div className="glass-card rounded-2xl p-5 shadow-card">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold text-gray-100">{title}</h3>
-          {subtitle && <p className="mt-0.5 text-xs text-gray-500">{subtitle}</p>}
+          <h3 className="text-sm font-semibold text-stone-800">{title}</h3>
+          {subtitle && <p className="mt-0.5 text-xs text-stone-400">{subtitle}</p>}
         </div>
         {action}
       </div>
@@ -30,8 +30,8 @@ export function Skeleton({ className }: { className?: string }) {
 export function EmptyState({ title, description }: { title: string; description: string }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-surface-border py-16 text-center">
-      <p className="text-sm font-medium text-gray-300">{title}</p>
-      <p className="mt-1 max-w-sm text-xs text-gray-500">{description}</p>
+      <p className="text-sm font-medium text-stone-600">{title}</p>
+      <p className="mt-1 max-w-sm text-xs text-stone-400">{description}</p>
     </div>
   );
 }

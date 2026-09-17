@@ -33,7 +33,7 @@ export function UploadDropzone({ onFile, uploading }: { onFile: (file: File) => 
       onClick={() => inputRef.current?.click()}
       className={clsx(
         "flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-16 text-center transition-colors",
-        dragging ? "border-brand-500 bg-brand-600/5" : "border-surface-border hover:border-brand-500/40 hover:bg-white/[0.02]"
+        dragging ? "border-brand-500 bg-brand-500/[0.04]" : "border-surface-border hover:border-brand-500/40 hover:bg-stone-900/[0.015]"
       )}
     >
       <input
@@ -46,10 +46,10 @@ export function UploadDropzone({ onFile, uploading }: { onFile: (file: File) => 
       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-gradient shadow-glow">
         {uploading ? <Loader2 size={22} className="animate-spin text-white" /> : <UploadCloud size={22} className="text-white" />}
       </div>
-      <p className="mt-4 text-sm font-medium text-gray-200">
+      <p className="mt-4 text-sm font-medium text-stone-700">
         {uploading ? "Uploading and validating…" : "Drop your sales CSV here, or click to browse"}
       </p>
-      <p className="mt-1.5 flex items-center gap-1.5 text-xs text-gray-500">
+      <p className="mt-1.5 flex items-center gap-1.5 text-xs text-stone-400">
         <FileSpreadsheet size={13} />
         Required columns: date, product_id, product_name, units_sold, revenue
       </p>

@@ -91,8 +91,8 @@ export default function ForecastPage() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-xl font-semibold tracking-tight text-white">Forecasting</h1>
-        <p className="mt-1 text-sm text-gray-500">Train and compare models, then generate a demand forecast for any horizon.</p>
+        <h1 className="text-xl font-semibold tracking-tight text-stone-900">Forecasting</h1>
+        <p className="mt-1 text-sm text-stone-400">Train and compare models, then generate a demand forecast for any horizon.</p>
       </div>
 
       {!activeDatasetId ? (
@@ -143,7 +143,7 @@ export default function ForecastPage() {
                   <select
                     value={selectedModel}
                     onChange={(e) => setSelectedModel(e.target.value)}
-                    className="rounded-lg border border-surface-border bg-surface-card px-3 py-1.5 text-xs text-gray-200"
+                    className="rounded-lg border border-surface-border bg-surface-card px-3 py-1.5 text-xs text-stone-700"
                   >
                     {trainingRun.results
                       .filter((r) => r.metrics && Object.keys(r.metrics).length)
@@ -162,7 +162,7 @@ export default function ForecastPage() {
                 <ChartCard title="Detected Anomalies" subtitle="Days that deviate sharply from the recent trend">
                   <div className="flex flex-wrap gap-2">
                     {trainingRun.anomalies.map((a) => (
-                      <div key={a.date} className="flex items-center gap-1.5 rounded-lg border border-accent-amber/25 bg-accent-amber/5 px-3 py-1.5 text-xs text-accent-amber">
+                      <div key={a.date} className="flex items-center gap-1.5 rounded-lg border border-accent-amber/25 bg-accent-amber/[0.06] px-3 py-1.5 text-xs text-accent-amber">
                         <TriangleAlert size={12} />
                         {a.date} · {a.value.toLocaleString()} units (z={a.z_score})
                       </div>
@@ -174,7 +174,7 @@ export default function ForecastPage() {
               <ChartCard title="3. Generate Forecast" subtitle="Choose a horizon and produce a forward-looking forecast">
                 <div className="flex flex-wrap items-end gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <span className="text-[11px] font-medium uppercase tracking-wide text-gray-500">Horizon (days)</span>
+                    <span className="text-[11px] font-medium uppercase tracking-wide text-stone-400">Horizon (days)</span>
                     <div className="flex gap-1.5">
                       {HORIZONS.map((h) => (
                         <button
@@ -184,7 +184,7 @@ export default function ForecastPage() {
                             setCustomHorizon("");
                           }}
                           className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
-                            horizon === h && !customHorizon ? "bg-brand-600/20 text-brand-200 border border-brand-500/40" : "border border-surface-border text-gray-400 hover:text-gray-200"
+                            horizon === h && !customHorizon ? "bg-brand-500/10 text-brand-700 border border-brand-500/40" : "border border-surface-border text-stone-500 hover:text-stone-800"
                           }`}
                         >
                           {h}d
@@ -195,17 +195,17 @@ export default function ForecastPage() {
                         placeholder="Custom"
                         value={customHorizon}
                         onChange={(e) => setCustomHorizon(e.target.value)}
-                        className="w-24 rounded-lg border border-surface-border bg-surface-card px-3 py-2 text-sm text-gray-200 outline-none focus:border-brand-500"
+                        className="w-24 rounded-lg border border-surface-border bg-surface-card px-3 py-2 text-sm text-stone-700 outline-none focus:border-brand-500"
                       />
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <span className="text-[11px] font-medium uppercase tracking-wide text-gray-500">Model</span>
+                    <span className="text-[11px] font-medium uppercase tracking-wide text-stone-400">Model</span>
                     <select
                       value={selectedModel}
                       onChange={(e) => setSelectedModel(e.target.value)}
-                      className="rounded-lg border border-surface-border bg-surface-card px-3 py-2 text-sm text-gray-200"
+                      className="rounded-lg border border-surface-border bg-surface-card px-3 py-2 text-sm text-stone-700"
                     >
                       {trainingRun.results
                         .filter((r) => r.metrics && Object.keys(r.metrics).length)
@@ -238,7 +238,7 @@ export default function ForecastPage() {
               action={
                 <a
                   href={api.exportForecastUrl(forecast.id)}
-                  className="flex items-center gap-1.5 rounded-lg border border-surface-border px-3 py-1.5 text-xs font-medium text-gray-300 hover:border-brand-500/50 hover:text-white"
+                  className="flex items-center gap-1.5 rounded-lg border border-surface-border px-3 py-1.5 text-xs font-medium text-stone-600 hover:border-brand-500/50 hover:text-stone-900"
                 >
                   <Download size={13} />
                   Export CSV

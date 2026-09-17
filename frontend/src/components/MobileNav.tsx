@@ -14,7 +14,7 @@ const ITEMS = [
 export function MobileNav() {
   const pathname = usePathname();
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-30 flex lg:hidden border-t border-surface-border bg-[#0d1120]/95 backdrop-blur-xl">
+    <nav className="fixed bottom-0 left-0 right-0 z-30 flex lg:hidden border-t border-surface-border bg-white/95 backdrop-blur-xl">
       {ITEMS.map((item) => {
         const active = pathname === item.href;
         const Icon = item.icon;
@@ -24,7 +24,7 @@ export function MobileNav() {
             href={item.href}
             className={clsx(
               "flex flex-1 flex-col items-center gap-1 py-3 text-[11px] font-medium",
-              active ? "text-brand-300" : "text-gray-500"
+              active ? "text-brand-600" : "text-stone-400"
             )}
           >
             <Icon size={18} />

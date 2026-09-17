@@ -15,19 +15,20 @@ export function TrendChart({ data, metric }: { data: TrendPoint[]; metric: "reve
       <AreaChart data={data} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
         <defs>
           <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6366f1" stopOpacity={0.35} />
-            <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
+            <stop offset="0%" stopColor="#4f46e5" stopOpacity={0.16} />
+            <stop offset="100%" stopColor="#4f46e5" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
         <XAxis dataKey="date" tickLine={false} axisLine={false} minTickGap={40} />
         <YAxis tickLine={false} axisLine={false} tickFormatter={formatCompact} width={56} />
         <Tooltip
-          contentStyle={{ background: "#141a29", border: "1px solid #232a3d", borderRadius: 10 }}
-          labelStyle={{ color: "#9ca3af" }}
+          contentStyle={{ background: "#ffffff", border: "1px solid #e7e0d1", borderRadius: 10 }}
+          labelStyle={{ color: "#8a8171" }}
+          itemStyle={{ color: "#221f1a" }}
           formatter={(value: number) => [metric === "revenue" ? `₹${formatCompact(value)}` : formatCompact(value), metric === "revenue" ? "Revenue" : "Units Sold"]}
         />
-        <Area type="monotone" dataKey={metric} stroke="#818cf8" strokeWidth={2} fill="url(#trendFill)" />
+        <Area type="monotone" dataKey={metric} stroke="#4f46e5" strokeWidth={2} fill="url(#trendFill)" />
       </AreaChart>
     </ResponsiveContainer>
   );

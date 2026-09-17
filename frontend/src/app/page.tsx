@@ -80,8 +80,8 @@ export default function OverviewPage() {
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-white">Overview</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-xl font-semibold tracking-tight text-stone-900">Overview</h1>
+          <p className="mt-1 text-sm text-stone-400">
             {kpis ? `${kpis.date_range.start} — ${kpis.date_range.end}` : "Business performance at a glance"}
           </p>
         </div>
@@ -120,7 +120,7 @@ export default function OverviewPage() {
                   <button
                     key={m}
                     onClick={() => setMetric(m)}
-                    className={`rounded-md px-2.5 py-1 font-medium transition-colors ${metric === m ? "bg-brand-600/20 text-brand-200" : "text-gray-500 hover:text-gray-300"}`}
+                    className={`rounded-md px-2.5 py-1 font-medium transition-colors ${metric === m ? "bg-brand-500/10 text-brand-700" : "text-stone-400 hover:text-stone-700"}`}
                   >
                     {m === "revenue" ? "Revenue" : "Units"}
                   </button>

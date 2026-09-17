@@ -35,10 +35,10 @@ export default function UploadPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-xl font-semibold tracking-tight text-white">Upload Sales Data</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Upload a CSV with historical sales transactions. Required columns: <code className="text-gray-400">date, product_id, product_name, units_sold, revenue</code>.
-          Recommended: <code className="text-gray-400">category, region, unit_price</code>.
+        <h1 className="text-xl font-semibold tracking-tight text-stone-900">Upload Sales Data</h1>
+        <p className="mt-1 text-sm text-stone-500">
+          Upload a CSV with historical sales transactions. Required columns: <code className="text-stone-600">date, product_id, product_name, units_sold, revenue</code>.
+          Recommended: <code className="text-stone-600">category, region, unit_price</code>.
         </p>
       </div>
 
@@ -66,13 +66,13 @@ export default function UploadPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-surface-border text-left text-gray-500">
+              <tr className="border-b border-surface-border text-left text-stone-400">
                 <th className="py-2 pr-4 font-medium">Column</th>
                 <th className="py-2 pr-4 font-medium">Type</th>
                 <th className="py-2 font-medium">Requirement</th>
               </tr>
             </thead>
-            <tbody className="text-gray-400">
+            <tbody className="text-stone-500">
               {[
                 ["date", "Date", "Required"],
                 ["product_id", "String", "Required"],
@@ -86,7 +86,7 @@ export default function UploadPage() {
                 ["marketing_spend", "Numeric", "Optional"],
               ].map(([col, type, req]) => (
                 <tr key={col} className="border-b border-surface-border/50 last:border-0">
-                  <td className="py-2 pr-4 font-mono text-gray-300">{col}</td>
+                  <td className="py-2 pr-4 font-mono text-stone-600">{col}</td>
                   <td className="py-2 pr-4">{type}</td>
                   <td className="py-2">{req}</td>
                 </tr>

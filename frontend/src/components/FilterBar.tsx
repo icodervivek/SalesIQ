@@ -23,11 +23,11 @@ function Select({
 }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[11px] font-medium uppercase tracking-wide text-gray-500">{label}</span>
+      <span className="text-[11px] font-medium uppercase tracking-wide text-stone-400">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-lg border border-surface-border bg-surface-card px-3 py-2 text-sm text-gray-200 outline-none transition-colors focus:border-brand-500 min-w-[160px]"
+        className="rounded-lg border border-surface-border bg-surface-card px-3 py-2 text-sm text-stone-700 outline-none transition-colors focus:border-brand-500 min-w-[160px]"
       >
         {children}
       </select>
