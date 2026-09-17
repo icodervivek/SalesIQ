@@ -1,0 +1,5 @@
+# Optional: only needed when DATABASE_URL points at PostgreSQL
+# (the default local setup uses SQLite and does not need this).
+# Installed automatically inside the Docker image, where prebuilt
+# wheels are available.
+psycopg2-binary==2.9.10

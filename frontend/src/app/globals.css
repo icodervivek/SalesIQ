@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: #0b0e17;
+  color: #e5e7eb;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #232a3d;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2f3850;
+}
+
+.glass-card {
+  background: linear-gradient(180deg, rgba(20, 26, 41, 0.9) 0%, rgba(17, 22, 35, 0.9) 100%);
+  border: 1px solid #232a3d;
+  backdrop-filter: blur(12px);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #141a29 25%, #1c2438 37%, #141a29 63%);
+  background-size: 1000px 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+.recharts-cartesian-axis-tick text {
+  fill: #6b7280;
+  font-size: 12px;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: #1c2438;
+}
+
+.recharts-default-tooltip {
+  background-color: #141a29 !important;
+  border: 1px solid #232a3d !important;
+  border-radius: 10px !important;
+}

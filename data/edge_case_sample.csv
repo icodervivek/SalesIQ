@@ -1,0 +1,14 @@
+date,product_id,product_name,category,region,units_sold,unit_price,discount,marketing_spend,revenue
+2024-01-01,P001,Laptop Pro,Electronics,North,12,60000,5,25000,684000
+2024-01-02,P001,Laptop Pro,Electronics,North,10,60000,0,0,600000
+2024-01-02,P001,Laptop Pro,Electronics,North,10,60000,0,0,600000
+2024-01-03,P001,Laptop Pro,Electronics,North,,60000,0,0,
+2024-01-04,P001,Laptop Pro,Electronics,North,-5,60000,0,0,-300000
+not-a-date,P001,Laptop Pro,Electronics,North,8,60000,0,0,480000
+2024-01-06,P001,Laptop Pro,Electronics,North,9,,0,0,540000
+2024-01-07,P001,Laptop Pro,Electronics,North,0,60000,0,0,0
+2024-01-08,P001,Laptop Pro,Electronics,North,300,60000,0,0,18000000
+2024-01-09,P002,Wireless Mouse,Electronics,South,25,900,10,0,20250
+2024-01-10,P002,Wireless Mouse,Electronics,South,22,900,0,,19800
+2024-01-11,P002,Wireless Mouse,,South,18,900,0,0,16200
+2024-01-12,P002,Wireless Mouse,Electronics,,20,900,0,0,18000
