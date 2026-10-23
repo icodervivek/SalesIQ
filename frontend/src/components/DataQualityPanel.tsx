@@ -55,7 +55,6 @@ export function DataQualityPanel({ validation, cleaning }: { validation: Validat
           <li>Dropped negative values: <span className="text-stone-700">{cleaning.dropped_negative_values}</span></li>
           <li>Dropped missing required: <span className="text-stone-700">{cleaning.dropped_missing_required}</span></li>
           <li>Imputed unit price: <span className="text-stone-700">{cleaning.imputed_unit_price}</span></li>
-          <li>Clipped outliers: <span className="text-stone-700">{cleaning.clipped_outliers}</span></li>
         </ul>
       </div>
 

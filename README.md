@@ -242,9 +242,10 @@ The cleaning pipeline (`ml/preprocessing/cleaning.py`) explicitly handles:
 - Missing `discount`/`marketing_spend` → imputed as `0`.
 - Missing `category`/`region` → filled as `"Unknown"` (not dropped, so the
   row's revenue/units are not lost from the top-line numbers).
-- Extreme per-product outliers in `units_sold` → **winsorized** (clipped at
-  the 99.5th percentile), not dropped — a large spike is potential business
-  signal (promotion, stockout recovery), not automatically an error.
+- Valid `units_sold` values are preserved for analytics and dashboard totals.
+  For model fitting only, extreme per-product training values are winsorized
+  (clipped at the 99.5th percentile); validation uses the original held-out
+  values so forecast metrics reflect actual recorded sales.
 - Gaps in the daily time series (a date with no transactions for a segment)
   → filled with 0 during aggregation, documented as an assumption: a missing
   day is treated as "zero recorded sales" for modeling purposes.

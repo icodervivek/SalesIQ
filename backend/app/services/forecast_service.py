@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.models.db_models import Dataset, ForecastRun
 from ml.features.feature_engineering import aggregate_daily_series
 from ml.forecasting.pipeline import forecast_future
+from ml.preprocessing.cleaning import clip_units_sold_outliers
 
 MAX_HORIZON = 180
 
@@ -33,9 +34,25 @@ def generate_forecast(
         raise ValueError("No data matches the selected product/region filter.")
 
     daily = aggregate_daily_series(filtered)
+    model_df, _ = clip_units_sold_outliers(df)
+    model_filtered = model_df
+    if product_id:
+        model_filtered = model_filtered.loc[model_filtered["product_id"] == product_id]
+    if region:
+        model_filtered = model_filtered.loc[model_filtered["region"] == region]
+    model_daily = aggregate_daily_series(model_filtered)
+
     scope_col = "product_id" if product_id else ("region" if region else None)
     scope_value = product_id or region
-    result = forecast_future(daily, model_name or "", horizon, full_transactions=df, scope_col=scope_col, scope_value=scope_value)
+    result = forecast_future(
+        daily,
+        model_name or "",
+        horizon,
+        full_transactions=df,
+        scope_col=scope_col,
+        scope_value=scope_value,
+        fit_daily=model_daily,
+    )
 
     run = ForecastRun(
         dataset_id=dataset.id,

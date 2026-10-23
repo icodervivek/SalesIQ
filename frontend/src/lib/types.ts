@@ -21,7 +21,6 @@ export interface CleaningSummary {
   imputed_unit_price: number;
   imputed_discount: number;
   imputed_marketing_spend: number;
-  clipped_outliers: number;
   notes: string[];
 }
 

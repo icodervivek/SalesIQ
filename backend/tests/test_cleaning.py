@@ -1,6 +1,6 @@
 import pandas as pd
 
-from ml.preprocessing.cleaning import clean_sales_data
+from ml.preprocessing.cleaning import clean_sales_data, clip_units_sold_outliers
 from ml.preprocessing.validation import validate_dataset
 
 
@@ -48,3 +48,23 @@ def test_clean_sales_data_removes_invalid_rows():
 def test_clean_sales_data_is_sorted_by_date():
     cleaned, _ = clean_sales_data(_sample_raw_df())
     assert cleaned["date"].is_monotonic_increasing
+
+
+def test_cleaning_preserves_valid_high_unit_sales_for_analytics():
+    df = pd.DataFrame(
+        {
+            "date": pd.date_range("2024-01-01", periods=20),
+            "product_id": "P1",
+            "product_name": "Widget",
+            "units_sold": [10] * 19 + [100],
+            "revenue": [100.0] * 19 + [1000.0],
+        }
+    )
+
+    cleaned, summary = clean_sales_data(df)
+    model_data, clipped_count = clip_units_sold_outliers(cleaned)
+
+    assert int(cleaned["units_sold"].sum()) == 290
+    assert summary.output_rows == len(df)
+    assert clipped_count == 1
+    assert model_data["units_sold"].sum() < cleaned["units_sold"].sum()

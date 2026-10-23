@@ -139,6 +139,34 @@ def test_analytics_summary(uploaded_dataset_id):
     assert body["total_revenue"] > 0
 
 
+def test_analytics_preserves_valid_high_unit_sales():
+    df = pd.DataFrame(
+        {
+            "date": pd.date_range("2024-01-01", periods=20, freq="D").strftime("%Y-%m-%d"),
+            "product_id": "P002",
+            "product_name": "Test Widget",
+            "category": "Test",
+            "region": "North",
+            "units_sold": [10] * 19 + [100],
+            "unit_price": 10,
+            "revenue": [100] * 19 + [1000],
+        }
+    )
+    buffer = io.BytesIO()
+    df.to_csv(buffer, index=False)
+
+    upload_response = client.post(
+        "/api/datasets/upload",
+        files={"file": ("high-sales.csv", buffer.getvalue(), "text/csv")},
+    )
+    assert upload_response.status_code == 200, upload_response.text
+    dataset_id = upload_response.json()["id"]
+
+    summary_response = client.get(f"/api/analytics/summary?dataset_id={dataset_id}")
+    assert summary_response.status_code == 200
+    assert summary_response.json()["total_units_sold"] == int(df["units_sold"].sum())
+
+
 def test_train_and_forecast_flow(uploaded_dataset_id):
     train_response = client.post("/api/models/train", json={"dataset_id": uploaded_dataset_id, "test_size": 14})
     assert train_response.status_code == 200, train_response.text

@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from ml.features.feature_engineering import aggregate_daily_series, compute_peer_average_series
+from ml.forecasting import pipeline
 from ml.models.xgboost_model import XGBoostForecaster
 
 
@@ -51,3 +52,51 @@ def test_xgboost_forecaster_persists_last_exogenous_values_into_the_future():
     pred_high = XGBoostForecaster().fit(high_discount).predict(horizon=5)
 
     assert not np.allclose(pred_low, pred_high)
+
+
+def test_training_clips_fit_values_but_validates_against_actual_sales(monkeypatch):
+    dates = pd.date_range("2024-01-01", periods=60, freq="D")
+    transactions = pd.DataFrame(
+        {
+            "date": dates,
+            "product_id": "P1",
+            "units_sold": [10] * 53 + [11] * 7,
+            "revenue": [100.0] * 53 + [110.0] * 7,
+        }
+    )
+    transactions.loc[30, "units_sold"] = 100
+    transactions.loc[30, "revenue"] = 1000
+
+    fit_units = {}
+
+    class FakeBaseline:
+        name = "fake baseline"
+
+        def fit(self, values):
+            fit_units["baseline"] = values.copy()
+            return self
+
+        def predict(self, horizon):
+            return np.zeros(horizon)
+
+    class FakeXGBoost:
+        name = "fake XGBoost"
+
+        def fit(self, daily, peer_avg=None):
+            fit_units["xgboost"] = daily["units_sold"].copy()
+            return self
+
+        def predict(self, horizon):
+            return np.zeros(horizon)
+
+    monkeypatch.setattr(pipeline, "SeasonalNaiveForecaster", FakeBaseline)
+    monkeypatch.setattr(pipeline.SarimaForecaster, "is_available", staticmethod(lambda: False))
+    monkeypatch.setattr(pipeline, "XGBoostForecaster", FakeXGBoost)
+
+    report, daily = pipeline.run_training_and_evaluation(transactions, test_size=7)
+    actual = report.results[0].actuals
+
+    assert fit_units["baseline"].sum() < transactions.iloc[:-7]["units_sold"].sum()
+    assert fit_units["xgboost"].sum() < transactions.iloc[:-7]["units_sold"].sum()
+    assert actual == transactions.iloc[-7:]["units_sold"].tolist()
+    assert int(daily["units_sold"].sum()) == int(transactions["units_sold"].sum())

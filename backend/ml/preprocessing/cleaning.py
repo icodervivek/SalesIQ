@@ -26,7 +26,6 @@ class CleaningSummary:
     imputed_unit_price: int = 0
     imputed_discount: int = 0
     imputed_marketing_spend: int = 0
-    clipped_outliers: int = 0
     notes: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
@@ -91,23 +90,31 @@ def clean_sales_data(raw_df: pd.DataFrame) -> tuple[pd.DataFrame, CleaningSummar
         if col in df.columns:
             df[col] = df[col].fillna("Unknown")
 
-    # 7. Winsorize extreme outliers in units_sold per product (clip rather
-    #    than drop, so legitimate demand spikes are dampened, not erased —
-    #    a large spike is business signal, not necessarily an error).
-    if "units_sold" in df.columns:
-        def clip_group(s: pd.Series) -> pd.Series:
-            if len(s) < 10:
-                return s
-            upper = s.quantile(0.995)
-            return s.clip(upper=upper)
-
-        clipped = df.groupby("product_id")["units_sold"].transform(clip_group)
-        summary.clipped_outliers = int((clipped != df["units_sold"]).sum())
-        df["units_sold"] = clipped
-
     df = df.sort_values("date").reset_index(drop=True)
     summary.output_rows = len(df)
     if summary.output_rows == 0:
         summary.notes.append("All rows were removed during cleaning — check the source file.")
 
     return df, summary
+
+
+def clip_units_sold_outliers(
+    df: pd.DataFrame,
+    reference_df: pd.DataFrame | None = None,
+) -> tuple[pd.DataFrame, int]:
+    """Clip extreme per-product sales only in a model-fitting copy."""
+    if "units_sold" not in df.columns or "product_id" not in df.columns:
+        return df.copy(), 0
+
+    clipped_df = df.copy()
+    reference = reference_df if reference_df is not None else clipped_df
+    if "units_sold" not in reference.columns or "product_id" not in reference.columns:
+        return clipped_df, 0
+
+    grouped = reference.groupby("product_id")["units_sold"]
+    caps = grouped.quantile(0.995)
+    caps = caps.where(grouped.size() >= 10, np.inf)
+    clipped_units = clipped_df["units_sold"].clip(upper=clipped_df["product_id"].map(caps))
+    clipped_count = int((clipped_units != clipped_df["units_sold"]).sum())
+    clipped_df["units_sold"] = clipped_units
+    return clipped_df, clipped_count

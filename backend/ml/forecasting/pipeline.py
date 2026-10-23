@@ -19,6 +19,7 @@ from ml.features.feature_engineering import aggregate_daily_series, compute_peer
 from ml.models.baseline import SeasonalNaiveForecaster
 from ml.models.sarima_model import SarimaForecaster
 from ml.models.xgboost_model import XGBoostForecaster
+from ml.preprocessing.cleaning import clip_units_sold_outliers
 
 
 @dataclass
@@ -88,7 +89,15 @@ def run_training_and_evaluation(
     peer_avg = compute_peer_average_series(full_transactions if full_transactions is not None else transactions, scope_col, scope_value)
 
     test_size = min(test_size, max(7, len(daily) // 5))
-    train_daily = daily.iloc[:-test_size]
+    cutoff_date = daily.iloc[-test_size - 1]["date"]
+    training_transactions = transactions.loc[transactions["date"] <= cutoff_date]
+    reference_training = full_transactions if full_transactions is not None else transactions
+    reference_training = reference_training.loc[reference_training["date"] <= cutoff_date]
+    clipped_training_transactions, _ = clip_units_sold_outliers(
+        training_transactions,
+        reference_df=reference_training,
+    )
+    train_daily = aggregate_daily_series(clipped_training_transactions).sort_values("date").reset_index(drop=True)
     test_daily = daily.iloc[-test_size:]
 
     y_train = train_daily.set_index("date")["units_sold"]
@@ -156,18 +165,21 @@ def forecast_future(
     full_transactions: pd.DataFrame | None = None,
     scope_col: str | None = None,
     scope_value: str | None = None,
+    fit_daily: pd.DataFrame | None = None,
 ) -> dict:
     """Refits the chosen model on the FULL daily series and forecasts
     `horizon` days beyond the last observed date. Returns point forecasts
     and, where supported, a prediction interval.
     """
+    model_daily = fit_daily if fit_daily is not None else daily
     y_full = daily.set_index("date")["units_sold"]
+    y_model = model_daily.set_index("date")["units_sold"]
     last_date = daily["date"].max()
     future_dates = pd.date_range(last_date + pd.Timedelta(days=1), periods=horizon, freq="D")
     future_date_strs = [d.strftime("%Y-%m-%d") for d in future_dates]
 
     if model_name.startswith("SARIMA"):
-        model = SarimaForecaster().fit(y_full)
+        model = SarimaForecaster().fit(y_model)
         mean, lower, upper = model.predict_with_interval(horizon)
         return {
             "model": model.name,
@@ -179,7 +191,7 @@ def forecast_future(
 
     if model_name.startswith("XGBoost"):
         peer_avg = compute_peer_average_series(full_transactions if full_transactions is not None else daily, scope_col, scope_value)
-        model = XGBoostForecaster().fit(daily, peer_avg=peer_avg)
+        model = XGBoostForecaster().fit(model_daily, peer_avg=peer_avg)
         pred = model.predict(horizon)
         # Empirical interval derived from residual std of in-sample fit as a
         # lightweight uncertainty proxy (documented as an approximation).
@@ -194,7 +206,7 @@ def forecast_future(
         }
 
     # Default / fallback: seasonal-naive baseline.
-    model = SeasonalNaiveForecaster().fit(y_full)
+    model = SeasonalNaiveForecaster().fit(y_model)
     pred = model.predict(horizon)
     return {
         "model": model.name,
