@@ -38,6 +38,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new ApiError(detail, res.status);
   }
 
+  if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
 }
 
@@ -52,6 +53,7 @@ export const api = {
 
   listDatasets: () => request<DatasetListItem[]>("/api/datasets"),
   getDataset: (id: number) => request<Dataset>(`/api/datasets/${id}`),
+  deleteDataset: (id: number) => request<void>(`/api/datasets/${id}`, { method: "DELETE" }),
 
   filters: (datasetId: number) => request<FilterOptions>(`/api/analytics/filters?dataset_id=${datasetId}`),
 

@@ -184,6 +184,7 @@ and **`/redoc`**. Summary:
 | POST | `/api/datasets/upload` | Upload + validate + clean a CSV |
 | GET | `/api/datasets` | List uploaded datasets |
 | GET | `/api/datasets/{id}` | Dataset detail + validation/cleaning report |
+| DELETE | `/api/datasets/{id}` | Delete a dataset and its associated training/forecast runs |
 | GET | `/api/analytics/summary` | KPIs (revenue, units, AOV, growth) |
 | GET | `/api/analytics/trends` | Historical trend series (daily/weekly/monthly) |
 | GET | `/api/analytics/top-products` | Top products by revenue |
@@ -254,6 +255,9 @@ The cleaning pipeline (`ml/preprocessing/cleaning.py`) explicitly handles:
 
 Every upload returns a `validation_report` (what was detected) and a
 `cleaning_summary` (what was done about it), both rendered in the dashboard.
+Re-uploading the same file reuses the existing dataset instead of adding
+another switcher entry; existing uploads with identical cleaned data are
+grouped in the dataset switcher and can be deleted together.
 
 ## 8. Repository Structure
 

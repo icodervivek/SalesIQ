@@ -1,15 +1,41 @@
 "use client";
 
-import { Database, ChevronDown } from "lucide-react";
+import { Database, ChevronDown, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useDatasetContext } from "@/lib/dataset-context";
+import { api, ApiError } from "@/lib/api";
 import { clsx } from "clsx";
 
 export function Topbar() {
-  const { datasets, activeDatasetId, setActiveDatasetId, loading } = useDatasetContext();
+  const { datasets, activeDatasetId, setActiveDatasetId, loading, refreshDatasets } = useDatasetContext();
   const [open, setOpen] = useState(false);
+  const [deletingDatasetId, setDeletingDatasetId] = useState<number | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const active = datasets.find((d) => d.id === activeDatasetId);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  async function handleDelete(datasetId: number, filename: string, duplicateCount: number) {
+    const copies =
+      duplicateCount > 1
+        ? ` This will also remove ${duplicateCount - 1} other upload(s) with identical cleaned data.`
+        : "";
+    const confirmed = window.confirm(
+      `Delete "${filename}"?${copies} Its associated training runs and forecasts will also be deleted.`
+    );
+    if (!confirmed) return;
+
+    setDeletingDatasetId(datasetId);
+    setDeleteError(null);
+    try {
+      await api.deleteDataset(datasetId);
+      await refreshDatasets();
+      setOpen(false);
+    } catch (err) {
+      setDeleteError(err instanceof ApiError ? err.message : "Could not delete the dataset.");
+    } finally {
+      setDeletingDatasetId(null);
+    }
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -51,24 +77,44 @@ export function Topbar() {
           </button>
 
           {open && datasets.length > 0 && (
-            <div className="absolute right-0 z-20 mt-2 w-72 overflow-hidden rounded-xl border border-surface-border bg-surface-card shadow-card animate-fade-in">
+            <div className="absolute right-0 z-20 mt-2 w-80 overflow-hidden rounded-xl border border-surface-border bg-surface-card shadow-card animate-fade-in">
+              {deleteError && (
+                <p role="alert" className="border-b border-surface-border px-4 py-2 text-xs text-red-600">
+                  {deleteError}
+                </p>
+              )}
               {datasets.map((d) => (
-                <button
+                <div
                   key={d.id}
-                  onClick={() => {
-                    setActiveDatasetId(d.id);
-                    setOpen(false);
-                  }}
                   className={clsx(
-                    "flex w-full flex-col items-start gap-0.5 px-4 py-2.5 text-left text-sm hover:bg-stone-900/[0.03]",
+                    "flex items-center gap-2 border-b border-surface-border/60 px-2 last:border-0",
                     d.id === activeDatasetId && "bg-brand-500/[0.06]"
                   )}
                 >
-                  <span className="truncate text-stone-800">{d.filename}</span>
-                  <span className="text-[11px] text-stone-400">
-                    {d.cleaned_row_count.toLocaleString()} clean rows · {new Date(d.uploaded_at).toLocaleDateString()}
-                  </span>
-                </button>
+                  <button
+                    onClick={() => {
+                      setActiveDatasetId(d.id);
+                      setOpen(false);
+                    }}
+                    className="flex min-w-0 flex-1 flex-col items-start gap-0.5 px-2 py-2.5 text-left text-sm hover:bg-stone-900/[0.03]"
+                  >
+                    <span className="w-full truncate text-stone-800">{d.filename}</span>
+                    <span className="text-[11px] text-stone-400">
+                      {d.cleaned_row_count.toLocaleString()} clean rows · {new Date(d.uploaded_at).toLocaleDateString()}
+                      {d.duplicate_count > 1 && ` · ${d.duplicate_count} uploads with identical cleaned data`}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Delete ${d.filename}`}
+                    title="Delete dataset"
+                    disabled={deletingDatasetId !== null}
+                    onClick={() => handleDelete(d.id, d.filename, d.duplicate_count)}
+                    className="rounded-lg p-2 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
               ))}
             </div>
           )}

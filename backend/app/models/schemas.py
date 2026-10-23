@@ -36,6 +36,7 @@ class DatasetListItem(BaseModel):
     uploaded_at: dt.datetime
     row_count: int
     cleaned_row_count: int
+    duplicate_count: int = 1
 
     model_config = ConfigDict(from_attributes=True)
 

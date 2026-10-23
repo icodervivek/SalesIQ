@@ -41,6 +41,7 @@ export interface DatasetListItem {
   uploaded_at: string;
   row_count: number;
   cleaned_row_count: number;
+  duplicate_count: number;
 }
 
 export interface SummaryKpis {
